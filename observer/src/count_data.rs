@@ -1,11 +1,9 @@
-#[derive(Debug, Copy, Clone)]
 pub struct CountData {
 	strong: usize,
 	weak: usize,
 }
 
 impl CountData {
-	pub(crate) fn new(strong: usize, weak: usize) -> Self {
 		Self { strong: 0, weak: 0 }
 	}
 
