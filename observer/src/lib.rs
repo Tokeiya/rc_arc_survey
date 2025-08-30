@@ -1,4 +1,4 @@
 mod arc_observer;
-mod dummy_load;
-mod observer_result;
-mod state_data;
+mod payload;
+mod query_result;
+mod report_data;

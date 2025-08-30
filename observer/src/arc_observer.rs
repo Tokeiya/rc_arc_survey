@@ -1,46 +1,52 @@
-use crate::dummy_load::{generate_dummy, DummyLoad};
-use crate::state_data::StateData;
+use crate::payload::Payload;
+use crate::query_result::QueryResult;
+use crate::report_data::ReportData;
+use dashmap::try_result::TryResult;
 use dashmap::DashMap;
-use std::sync::{Arc, LazyLock, Weak};
+use std::sync::Weak;
+use std::sync::{Arc, LazyLock};
 
-static OBSERVERS: LazyLock<DashMap<usize, Weak<DummyLoad>>> = LazyLock::new(DashMap::new);
+static OBSERVERS: LazyLock<DashMap<u64, Weak<Payload>>> = LazyLock::new(|| DashMap::new());
 
-pub fn yield_and_register() -> Arc<DummyLoad> {
-	let dummy = generate_dummy();
-	let id = dummy.id();
+pub fn register() -> Arc<Payload> {
+	let payload = Payload::generate();
+	let id = payload.get();
 
-	let arc = Arc::new(dummy);
+	let arc = Arc::new(payload);
+
 	OBSERVERS.insert(id, Arc::downgrade(&arc));
-
 	arc
 }
 
-pub fn vacuum() -> Vec<usize> {
-	let mut ret = Vec::new();
-
-	for elem in OBSERVERS
-		.iter()
-		.filter(|item| item.value().upgrade().is_none())
-	{
-		ret.push(*elem.key());
+pub fn try_get_report(id: u64) -> QueryResult<ReportData> {
+	fn get_report(arc: &Arc<Payload>) -> ReportData {
+		let strong = Arc::strong_count(arc);
+		let weak = Arc::weak_count(arc);
+		ReportData::new(arc.get(), strong, weak)
 	}
 
-	for id in ret.iter() {
-		OBSERVERS.remove(id);
+	match try_get(id) {
+		QueryResult::Some(arc) => QueryResult::Some(get_report(&arc)),
+		QueryResult::KeyNotFound => QueryResult::KeyNotFound,
+		QueryResult::Dropped => QueryResult::Dropped,
+		QueryResult::Locked => QueryResult::Locked,
 	}
-	ret
 }
 
-pub fn iter() -> impl Iterator<Item = (usize, Option<Arc<DummyLoad>>)> {
-	OBSERVERS
-		.iter()
-		.map(|item| (*item.key(), item.value().upgrade()))
+pub fn try_get(id: u64) -> QueryResult<Arc<Payload>> {
+	match OBSERVERS.try_get(&id) {
+		TryResult::Present(weak) => {
+			if let Some(arc) = weak.upgrade() {
+				QueryResult::Some(arc)
+			} else {
+				QueryResult::Dropped
+			}
+		}
+		TryResult::Absent => QueryResult::KeyNotFound,
+		TryResult::Locked => QueryResult::Locked,
+	}
 }
 
-pub fn try_get(id: usize) -> Option<Arc<DummyLoad>> {
-	todo!()
-}
-
-pub fn try_get_report(id: usize) -> Option<StateData> {
+pub fn vacuum() -> Vec<u64> {
 	todo!()
 }
