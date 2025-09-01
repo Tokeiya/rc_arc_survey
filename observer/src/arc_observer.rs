@@ -48,5 +48,15 @@ pub fn try_get(id: u64) -> QueryResult<Arc<Payload>> {
 }
 
 pub fn vacuum() -> Vec<u64> {
-	todo!()
+	let vec = OBSERVERS
+		.iter()
+		.filter(|x| x.value().upgrade().is_none())
+		.map(|x| *x.key())
+		.collect::<Vec<u64>>();
+
+	for id in vec.iter() {
+		OBSERVERS.remove(id);
+	}
+
+	vec
 }
