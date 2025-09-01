@@ -1,16 +1,16 @@
-use std::any::Any;
-use std::hash::Hash;
+use crate::dyn_key::DynKey;
+use std::hash::{Hash, Hasher};
 
-pub struct Key(Box<dyn Any>);
-
-impl Key {
-	pub fn new<T: Any + Hash>(t: T) -> Self {
-		Self(Box::new(t))
-	}
-}
+pub struct Key(Box<dyn DynKey>);
 
 impl PartialEq for Key {
 	fn eq(&self, other: &Self) -> bool {
-		self.0.eq(&other.0)
+		self.0.dyn_eq(other)
+	}
+}
+
+impl Hash for Key {
+	fn hash<H: Hasher>(&self, state: &mut H) {
+		todo!()
 	}
 }

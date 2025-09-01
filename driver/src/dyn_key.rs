@@ -1,10 +1,11 @@
+use crate::dyn_hasher::DynHasher;
 use std::any::Any;
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
 
 pub trait DynKey {
 	fn as_any(&self) -> &dyn Any;
-	fn dyn_eq<T: DynKey>(&self, other: &T) -> bool;
-	fn dyn_hash<H: Hasher>(&self, state: &mut H);
+	fn dyn_eq(&self, other: &dyn DynKey) -> bool;
+	fn dyn_hash(&self, state: &mut DynHasher);
 }
 
 impl<T> DynKey for T
@@ -15,15 +16,15 @@ where
 		self
 	}
 
-	fn dyn_eq<U: DynKey>(&self, other: &U) -> bool {
-		if let Some(o) = other.as_any().downcast_ref::<T>() {
-			self == o
+	fn dyn_eq(&self, other: &dyn DynKey) -> bool {
+		if let Some(other) = other.as_any().downcast_ref::<T>() {
+			self == other
 		} else {
 			false
 		}
 	}
 
-	fn dyn_hash<H: Hasher>(&self, state: &mut H) {
+	fn dyn_hash(&self, state: &mut DynHasher) {
 		self.hash(state);
 	}
 }

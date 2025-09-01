@@ -3,7 +3,7 @@
 #![feature(never_type)]
 
 mod arc_observer;
-mod payload;
+pub mod payload;
 mod query_result;
 mod rc_observer;
 mod report_data;
