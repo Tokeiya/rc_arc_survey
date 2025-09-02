@@ -2,8 +2,8 @@ use std::hash::Hasher;
 
 pub struct Envelope<'a>(&'a mut dyn Hasher);
 
-impl<'a> From<&'a mut dyn Hasher> for Envelope<'a> {
-	fn from(value: &'a mut dyn Hasher) -> Self {
+impl<'a, H: Hasher> From<&'a mut H> for Envelope<'a> {
+	fn from(value: &'a mut H) -> Self {
 		Self(value)
 	}
 }

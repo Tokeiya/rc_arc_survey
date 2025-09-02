@@ -1,26 +1,26 @@
-mod any_key;
-mod key;
-mod rec_hasher;
-
-use crate::any_key::AnyKey;
 use crate::key::Key;
 use std::any::Any;
 use std::collections::HashSet;
-use std::hash::Hasher;
+
+pub mod any_key;
+pub mod envelope;
+mod key;
 
 fn main() {
-	let mut set = HashSet::<Key>::new();
+	let mut set: HashSet<Key> = HashSet::new();
+
+	let a = 42;
+	let b = &a as &dyn Any;
+
 	dbg!(set.insert(Key::from_key("hello")));
 	dbg!(set.insert(Key::from_key("hello".to_string())));
-	dbg!(set.insert(Key::from_key("world")));
-	dbg!(set.insert(Key::from_key(42)));
-	dbg!(set.insert(Key::from_key(42u8)));
+	dbg!(set.insert(Key::from_key(42i8)));
+	dbg!(set.insert(Key::from_key(42i32)));
 
 	println!("repeat again");
 
 	dbg!(set.insert(Key::from_key("hello")));
 	dbg!(set.insert(Key::from_key("hello".to_string())));
-	dbg!(set.insert(Key::from_key("world")));
-	dbg!(set.insert(Key::from_key(42)));
-	dbg!(set.insert(Key::from_key(42u8)));
+	dbg!(set.insert(Key::from_key(42i8)));
+	dbg!(set.insert(Key::from_key(42i32)));
 }

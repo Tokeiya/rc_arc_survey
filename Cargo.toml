@@ -1,4 +1,4 @@
 [workspace]
 resolver = "3"
-members = ["alt","driver", "observer"]
+members = ["driver", "observer"]
 

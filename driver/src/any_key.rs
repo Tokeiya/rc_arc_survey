@@ -1,41 +1,35 @@
-use crate::rec_hasher::RecHasher;
-use std::any::Any;
+use crate::envelope::Envelope;
+use std::any::{Any, TypeId};
 use std::hash::Hash;
 
 pub trait AnyKey {
 	fn as_any(&self) -> &dyn Any;
-	fn as_any_mut(&mut self) -> &mut dyn Any;
-	fn equal(&self, other: &dyn AnyKey) -> bool;
+	fn dyn_eq(&self, other: &dyn AnyKey) -> bool;
+	fn dyn_hash(&self, hasher: &mut Envelope);
 
-	fn prepare_hash(&self) -> Vec<u8>;
+	fn type_id(&self) -> TypeId;
 }
 
 impl<T> AnyKey for T
 where
-	T: Any + Hash + PartialEq + Eq,
+	T: Any + Eq + Hash,
 {
 	fn as_any(&self) -> &dyn Any {
 		self
 	}
-
-	fn as_any_mut(&mut self) -> &mut dyn Any {
-		self
-	}
-
-	fn equal(&self, other: &dyn AnyKey) -> bool {
-		let tmp = other.as_any();
-
-		if let Some(other) = tmp.downcast_ref::<T>() {
-			self == other
+	fn dyn_eq(&self, other: &dyn AnyKey) -> bool {
+		if let Some(o) = other.as_any().downcast_ref::<T>() {
+			self == o
 		} else {
 			false
 		}
 	}
 
-	fn prepare_hash(&self) -> Vec<u8> {
-		let mut hasher = RecHasher::new();
-		self.hash(&mut hasher);
+	fn dyn_hash(&self, hasher: &mut Envelope) {
+		self.hash(hasher);
+	}
 
-		hasher.replay()
+	fn type_id(&self) -> TypeId {
+		self.as_any().type_id()
 	}
 }
