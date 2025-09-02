@@ -1,12 +1,15 @@
-use observer::payload::Payload;
-
-mod dyn_hasher;
-mod dyn_key;
+mod any_key;
 mod key;
+mod rec_hassher;
 
-fn main() {}
-
-fn foo(b: &Box<Payload>) {
-	let a = b.get();
-	println!("{}", a);
+use crate::any_key::AnyKey;
+use crate::key::Key;
+use std::any::Any;
+use std::collections::HashSet;
+fn main() {
+	let mut set = HashSet::<Key>::new();
+	dbg!(set.insert(Key::from_key("hello")));
+	dbg!(set.insert(Key::from_key("hello")));
+	dbg!(set.insert(Key::from_key("world")));
+	dbg!(set.insert(Key::from_key(42)));
 }
