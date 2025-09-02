@@ -1,4 +1,4 @@
-use crate::rec_hassher::RecHasher;
+use crate::rec_hasher::RecHasher;
 use std::any::Any;
 use std::hash::Hash;
 
