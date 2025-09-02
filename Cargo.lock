@@ -3,10 +3,6 @@
 version = 4
 
 [[package]]
-name = "alt"
-version = "0.1.0"
-
-[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -43,6 +39,10 @@ dependencies = [
  "once_cell",
  "parking_lot_core",
 ]
+
+[[package]]
+name = "driver"
+version = "0.1.0"
 
 [[package]]
 name = "hashbrown"
