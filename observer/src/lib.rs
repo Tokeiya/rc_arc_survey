@@ -1,8 +1,8 @@
 #![feature(thread_local)]
 #![feature(never_type)]
 
-mod arc_observer;
+pub mod arc_observer;
 pub mod payload;
 mod query_result;
-mod rc_observer;
-mod report_data;
+pub mod rc_observer;
+pub mod report_data;

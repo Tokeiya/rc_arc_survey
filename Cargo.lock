@@ -43,6 +43,9 @@ dependencies = [
 [[package]]
 name = "driver"
 version = "0.1.0"
+dependencies = [
+ "observer",
+]
 
 [[package]]
 name = "hashbrown"
