@@ -1,4 +1,3 @@
-#![feature(thread_local_internals)]
 #![feature(thread_local)]
 #![feature(never_type)]
 
